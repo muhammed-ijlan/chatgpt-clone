@@ -1,6 +1,31 @@
+import { useAuth } from '@clerk/clerk-react';
+import axiosInstance from '../../api/axiosInstance';
 import './dashboardpage.css'
 
 const DashboardPage = () => {
+
+    const { userId } = useAuth();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const text = e.target.text.value;
+        if (!text) return;
+
+        try {
+            const res = await axiosInstance.post("/chats", {
+                text,
+                userId,
+            },
+                {
+                    withCredentials: true,
+                });
+
+        } catch (e) {
+            console.log(e)
+        }
+
+    }
+
     return (
         <div className="dashboardPage">
             <div className="texts">
@@ -24,9 +49,9 @@ const DashboardPage = () => {
                 </div>
             </div>
             <div className='formContainer'>
-                <form >
-                    <input type="text" name="text" placeholder="Ask me anything..." />
-                    <button>
+                <form onSubmit={handleSubmit}>
+                    <input type="text" autoComplete='off' name="text" placeholder="Ask me anything..." />
+                    <button type='submit'>
                         <img src="/arrow.png" alt="" />
                     </button>
                 </form>
